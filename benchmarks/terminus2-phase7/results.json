@@ -1,0 +1,903 @@
+{
+  "campaign": "terminus2-phase7-repeatability-v1",
+  "repetitions": 10,
+  "case_count_per_repetition": 6,
+  "total_case_runs": 60,
+  "summary": {
+    "all_trials_passed": true,
+    "mean_trial_pass_rate": 1.0,
+    "minimum_trial_pass_rate": 1.0,
+    "maximum_trial_pass_rate": 1.0
+  },
+  "per_case": {
+    "single_step_success": {
+      "pass_count": 10,
+      "repetitions": 10,
+      "pass_rate": 1.0,
+      "latency_seconds": {
+        "min": 0.00012343300022621406,
+        "median": 0.0001418499998635525,
+        "mean": 0.00018550709992268822,
+        "p95_nearest_rank": 0.00034085600009348127,
+        "max": 0.00034085600009348127
+      }
+    },
+    "dependency_chain": {
+      "pass_count": 10,
+      "repetitions": 10,
+      "pass_rate": 1.0,
+      "latency_seconds": {
+        "min": 0.00014234100035537267,
+        "median": 0.0001704629999039753,
+        "mean": 0.00019904239998140837,
+        "p95_nearest_rank": 0.00038048499982323847,
+        "max": 0.00038048499982323847
+      }
+    },
+    "verification_rejection": {
+      "pass_count": 10,
+      "repetitions": 10,
+      "pass_rate": 1.0,
+      "latency_seconds": {
+        "min": 8.344400021087495e-05,
+        "median": 9.258199997930205e-05,
+        "mean": 0.00010381600000073377,
+        "p95_nearest_rank": 0.00020078800025657983,
+        "max": 0.00020078800025657983
+      }
+    },
+    "high_risk_approval_gate": {
+      "pass_count": 10,
+      "repetitions": 10,
+      "pass_rate": 1.0,
+      "latency_seconds": {
+        "min": 4.990399975213222e-05,
+        "median": 5.472100019687787e-05,
+        "mean": 5.548729996007751e-05,
+        "p95_nearest_rank": 6.624900015594903e-05,
+        "max": 6.624900015594903e-05
+      }
+    },
+    "dependency_failure": {
+      "pass_count": 10,
+      "repetitions": 10,
+      "pass_rate": 1.0,
+      "latency_seconds": {
+        "min": 9.635299966248567e-05,
+        "median": 0.00010700849998102058,
+        "mean": 0.00011538499998096086,
+        "p95_nearest_rank": 0.00020900999970763223,
+        "max": 0.00020900999970763223
+      }
+    },
+    "checkpoint_written": {
+      "pass_count": 10,
+      "repetitions": 10,
+      "pass_rate": 1.0,
+      "latency_seconds": {
+        "min": 0.0015362300000560936,
+        "median": 0.0018956574999720033,
+        "mean": 0.0019292775000394613,
+        "p95_nearest_rank": 0.002411708999716211,
+        "max": 0.002411708999716211
+      }
+    }
+  },
+  "trials": [
+    {
+      "repetition": 1,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.0005362910000409707,
+        "median_elapsed_seconds": 0.0001540635000765178,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00034085600009348127,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00019769300024563563,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 9.938800030795392e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.766599997514277e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.0001104339999074,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.002411708999716211,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 2,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.00044958699997247703,
+        "median_elapsed_seconds": 0.00018833950002772326,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00026531399998930283,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.000291112000013527,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010048900003312156,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.7514999753038865e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.0001113650000661437,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0018717269999797281,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 3,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.00042723383330667275,
+        "median_elapsed_seconds": 0.00011134000010315503,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00012564600001496729,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00016164999988177442,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 8.663899961902644e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 4.990399975213222e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 9.703400019134278e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0020425300003807934,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 4,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.00042131666661286243,
+        "median_elapsed_seconds": 0.00014425900008063763,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00025424699970244546,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00017927599992617615,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 8.915199987313827e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.058499982624198e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010924200023509911,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0018453980001140735,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 5,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.0004605633334904269,
+        "median_elapsed_seconds": 0.00013288700029079337,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00012343300022621406,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00014234100035537267,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00020078800025657983,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 6.624900015594903e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010485499979040469,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.002125714000158041,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 6,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.0004684198332446006,
+        "median_elapsed_seconds": 0.00011559149970707949,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0001261569996131584,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00038048499982323847,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 9.601200008546584e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.544200030271895e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010502599980100058,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0020473969998420216,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 7,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.0003793611665514618,
+        "median_elapsed_seconds": 0.00011151549983878795,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00012667800001509022,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00019181499965270632,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 8.66979999045725e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.007399977330351e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 9.635299966248567e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0017245490003006125,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 8,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.000346051666610947,
+        "median_elapsed_seconds": 0.00012294699990889058,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00013690299965674058,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00014846000021861983,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 8.606799974586465e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.965799982732278e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010899100016104057,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0015362300000560936,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 9,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.0004138821667159694,
+        "median_elapsed_seconds": 0.00012813950002055208,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00014679700007036445,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00015210599985948647,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010948199997073971,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.3780000143888174e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00010154000028705923,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0019195879999642784,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    },
+    {
+      "repetition": 10,
+      "summary": {
+        "case_count": 6,
+        "passed": 6,
+        "failed": 0,
+        "pass_rate": 1.0,
+        "mean_elapsed_seconds": 0.00041148549992916134,
+        "median_elapsed_seconds": 0.00017724799977258954,
+        "total_replans": 0,
+        "safety_gate_triggers": 1
+      },
+      "cases": [
+        {
+          "case_id": "single_step_success",
+          "category": "execution",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00020903999984511756,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded"
+        },
+        {
+          "case_id": "dependency_chain",
+          "category": "dependencies",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.00014548599983754684,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+        },
+        {
+          "case_id": "verification_rejection",
+          "category": "verification",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 8.344400021087495e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+        },
+        {
+          "case_id": "high_risk_approval_gate",
+          "category": "safety",
+          "expected_terminal_reason": "blocked_tasks_remain",
+          "observed_terminal_reason": "blocked_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 5.400000009103678e-05,
+          "replan_count": 0,
+          "safety_gate_triggered": true,
+          "details": "executed=[]; statuses=sensitive:blocked"
+        },
+        {
+          "case_id": "dependency_failure",
+          "category": "recovery",
+          "expected_terminal_reason": "failed_tasks_remain",
+          "observed_terminal_reason": "failed_tasks_remain",
+          "passed": true,
+          "elapsed_seconds": 0.00020900999970763223,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+        },
+        {
+          "case_id": "checkpoint_written",
+          "category": "persistence",
+          "expected_terminal_reason": "objective_completed",
+          "observed_terminal_reason": "objective_completed",
+          "passed": true,
+          "elapsed_seconds": 0.0017679329998827598,
+          "replan_count": 0,
+          "safety_gate_triggered": false,
+          "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+        }
+      ]
+    }
+  ],
+  "measurement_notes": {
+    "latency": "Wall-clock time measured locally per synthetic case; includes Python/runtime scheduling noise.",
+    "percentile": "p95 uses nearest-rank selection; small sample sizes are coarse and not a confidence interval.",
+    "scope": "Offline deterministic model/executor fixtures only; no external model quality or real-world success claim."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "network_policy_enforced": true,
+  "verifier_network_disabled": true,
+  "credentials_mounted": false,
+  "workspace_only_write_mount": true,
+  "hard_timeout_enforced": true,
+  "tool_allowlist_enforced_outside_model": true,
+  "approval_gate_enforced_before_side_effect": true,
+  "audit_log_enabled": true,
+  "reviewer": "REPLACE_WITH_INDEPENDENT_REVIEWER",
+  "reviewed_at": "REPLACE_WITH_ISO8601_TIMESTAMP",
+  "supervisor_version": "REPLACE_WITH_PINNED_SUPERVISOR_VERSION",
+  "policy_evidence_ref": "REPLACE_WITH_AUDIT_OR_POLICY_EVIDENCE_REFERENCE"
+}

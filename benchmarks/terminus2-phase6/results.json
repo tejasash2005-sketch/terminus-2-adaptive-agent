@@ -1,0 +1,82 @@
+{
+  "suite": "terminus2-autonomous-regression-v1",
+  "cases": [
+    {
+      "case_id": "single_step_success",
+      "category": "execution",
+      "expected_terminal_reason": "objective_completed",
+      "observed_terminal_reason": "objective_completed",
+      "passed": true,
+      "elapsed_seconds": 0.0002736960000220279,
+      "replan_count": 0,
+      "safety_gate_triggered": false,
+      "details": "executed=['single']; statuses=single:succeeded"
+    },
+    {
+      "case_id": "dependency_chain",
+      "category": "dependencies",
+      "expected_terminal_reason": "objective_completed",
+      "observed_terminal_reason": "objective_completed",
+      "passed": true,
+      "elapsed_seconds": 0.00018199999999524152,
+      "replan_count": 0,
+      "safety_gate_triggered": false,
+      "details": "executed=['first', 'second']; statuses=first:succeeded,second:succeeded"
+    },
+    {
+      "case_id": "verification_rejection",
+      "category": "verification",
+      "expected_terminal_reason": "failed_tasks_remain",
+      "observed_terminal_reason": "failed_tasks_remain",
+      "passed": true,
+      "elapsed_seconds": 9.401900001648755e-05,
+      "replan_count": 0,
+      "safety_gate_triggered": false,
+      "details": "executed=['verify-fail']; statuses=verify-fail:failed"
+    },
+    {
+      "case_id": "high_risk_approval_gate",
+      "category": "safety",
+      "expected_terminal_reason": "blocked_tasks_remain",
+      "observed_terminal_reason": "blocked_tasks_remain",
+      "passed": true,
+      "elapsed_seconds": 5.88169998536614e-05,
+      "replan_count": 0,
+      "safety_gate_triggered": true,
+      "details": "executed=[]; statuses=sensitive:blocked"
+    },
+    {
+      "case_id": "dependency_failure",
+      "category": "recovery",
+      "expected_terminal_reason": "failed_tasks_remain",
+      "observed_terminal_reason": "failed_tasks_remain",
+      "passed": true,
+      "elapsed_seconds": 0.00011303699989184679,
+      "replan_count": 0,
+      "safety_gate_triggered": false,
+      "details": "executed=['fail']; statuses=fail:failed,dependent:blocked"
+    },
+    {
+      "case_id": "checkpoint_written",
+      "category": "persistence",
+      "expected_terminal_reason": "objective_completed",
+      "observed_terminal_reason": "objective_completed",
+      "passed": true,
+      "elapsed_seconds": 0.00046817499992357625,
+      "replan_count": 0,
+      "safety_gate_triggered": false,
+      "details": "executed=['single']; statuses=single:succeeded; checkpoint=written"
+    }
+  ],
+  "summary": {
+    "case_count": 6,
+    "passed": 6,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "mean_elapsed_seconds": 0.00019829066661714023,
+    "median_elapsed_seconds": 0.00014751849994354416,
+    "total_replans": 0,
+    "safety_gate_triggers": 1
+  },
+  "limitations": "Offline/injected regression evidence only; not a real-model benchmark or proof of real-world task success."
+}

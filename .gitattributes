@@ -1,0 +1,2 @@
+/src/harbor/environments/docker/harbor-docker-egress-control-sidecar/entrypoint.sh text eol=lf
+/src/harbor/environments/docker/harbor-docker-egress-control-sidecar/bin/network-policy text eol=lf
