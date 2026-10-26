@@ -1,144 +1,404 @@
-# Harbor
+# Terminus-2 Adaptive Agent
 
- [![](https://dcbadge.limes.pink/api/server/https://discord.gg/QVvyhRw5UQ)](https://discord.gg/QVvyhRw5UQ)
-[![Docs](https://img.shields.io/badge/Docs-000000?style=for-the-badge&logo=mdbook&color=105864)](https://harborframework.com/docs)
-[![Cookbook](https://img.shields.io/badge/Cookbook-000000?style=for-the-badge&logo=mdbook&color=105864)](https://github.com/harbor-framework/harbor-cookbook)
-[![DOI](https://zenodo.org/badge/1032170083.svg)](https://doi.org/10.5281/zenodo.20953922)
+> A Windows-first AI-agent engineering project extending Harbor / Terminus-2 with adaptive execution, recovery-aware orchestration, provider routing, observability, and reproducible regression infrastructure.
 
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![uv](https://img.shields.io/badge/uv-0.13+-6E56CF)](https://docs.astral.sh/uv/)
+[![LiteLLM](https://img.shields.io/badge/LiteLLM-1.93.0-111827)](https://github.com/BerriAI/litellm)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2011-0078D4?logo=windows)](https://www.microsoft.com/windows)
+[![Status](https://img.shields.io/badge/Status-Active%20Engineering-0F766E)](#project-status)
 
+## Overview
 
-Harbor is a framework from the creators of [Terminal-Bench](https://www.tbench.ai) for evaluating and optimizing agents and language models. You can use Harbor to:
+This project is a hands-on engineering extension of **Terminus-2 within the Harbor framework**. The goal is not simply to run an existing terminal agent, but to build and validate the engineering layers around reliable agent execution.
 
-- Evaluate arbitrary agents like Claude Code, OpenHands, Codex CLI, and more.
-- Build and share your own benchmarks and environments.
-- Conduct experiments in thousands of environments in parallel through providers like Daytona, Modal, LangSmith, Blaxel, Novita Sandbox, Tensorlake, Runta, and Sail.
-- Generate rollouts for RL optimization.
+The project focuses on:
 
-Check out the [Harbor Cookbook](https://github.com/harbor-framework/harbor-cookbook) for end-to-end examples and guides.
+- **Adaptive failure handling** — classify terminal failures and generate structured recovery guidance.
+- **Guarded orchestration** — validate plans, dependencies, state transitions, remediation, and execution boundaries.
+- **Model/provider routing** — use shared LLM abstractions while keeping provider-specific behavior explicit.
+- **Observability** — capture recovery events and structured run outcomes.
+- **Recovery memory** — optionally persist recovery outcomes for future decision support.
+- **Evaluation tooling** — provide offline regression checks and a structured benchmark/evaluation harness.
+- **Windows-first reproducibility** — document and validate the Python, uv, Rust, MSVC, Docker, and LiteLLM toolchain required for development.
 
-Harbor usage telemetry is enabled by default and can be disabled. See the
-[usage stats documentation](https://harborframework.com/docs/usage-stats) for
-what is collected and how to opt out. The embedded PostHog project's ownership
-has been confirmed by the maintainer as belonging to Harbor and intended to
-remain in this release. This records maintainer confirmation; repository evidence
-does not independently verify ownership against PostHog project settings.
+> **Important:** This is an experimental extension/project built from and around Harbor/Terminus-2. It is not presented as an official Harbor release or upstream feature.
 
-## Experimental: Terminus-2 Adaptive Terminal Intelligence
+## Architecture
 
-This repository snapshot also includes an experimental extension to Terminus-2:
-conservative terminal-failure classification, recovery guidance, per-run recovery
-telemetry, optional persistent recovery-outcome memory, and a JSON results evaluator.
-The extension avoids automatic command retries because a timed-out command may
-already have changed the environment. Its task-planning module validates structured
-step proposals, dependencies, status transitions, remediation replans, and an opt-in
-multi-component dispatcher with explicit routing and dependency-aware failure handling.
-Handlers are injected; the opt-in `autonomous.py` extension now uses Harbor's existing
-`BaseLLM` abstraction for structured planning and an injected, policy-enforcing executor
-and verifier for guarded sequential execution. It does not execute model-generated shell
-text or automatically replace Terminus-2’s interactive agent loop. The offline regression
-suite in `benchmark_suite.py` checks core orchestration and safety behavior; it is not an
-external-model performance study.
+![Terminus-2 Adaptive Agent Architecture](docs/images/terminus2-adaptive-architecture.png)
 
-See [the adaptive-intelligence design and usage guide](docs/terminus2-adaptive-intelligence.md)
-for configuration, telemetry semantics, evaluation instructions, and explicit phase
-status. The benchmark evaluator is tooling only; measured baseline-versus-adaptive
-results must be collected before making performance claims.
+### High-level execution flow
+
+```mermaid
+flowchart LR
+    U[User / Benchmark Task] --> T[Terminus-2 Agent]
+    T --> P[Structured Planner]
+    P --> R[Provider / Model Routing]
+    R --> E[Policy-Enforcing Executor]
+    E --> V[Verifier]
+    V --> O[Observed Outcome]
+    O --> C{Failure?}
+    C -->|No| S[Successful Run]
+    C -->|Yes| F[Failure Classifier]
+    F --> G[Recovery Guidance]
+    G --> P
+    O --> M[(Optional Recovery Memory)]
+    O --> X[Telemetry / JSON Results]
+```
+
+The key design principle is **closed-loop recovery without blindly retrying shell commands**. A command may have timed out after partially changing the environment, so recovery decisions should be based on observed state rather than unconditional repetition.
+
+## Engineering Principles
+
+### 1. Separate planning from execution
+
+Model-generated planning is represented as structured data rather than executable shell text.
+
+The execution boundary is responsible for:
+
+- validating the proposed action,
+- enforcing policy,
+- executing through an injected executor,
+- collecting results,
+- verifying the resulting state.
+
+This keeps the model from directly owning the system execution boundary.
+
+### 2. Treat failures as information
+
+Instead of reducing every failure to `retry`, the adaptive layer distinguishes failure categories and produces structured recovery guidance.
+
+Conceptually:
+
+```text
+terminal outcome
+      │
+      ▼
+failure classification
+      │
+      ├── transient/environment issue
+      ├── dependency/state issue
+      ├── invalid action
+      └── unresolved task failure
+      │
+      ▼
+recovery guidance
+      │
+      ▼
+validated remediation plan
+      │
+      ▼
+guarded execution + verification
+```
+
+### 3. Make observability first-class
+
+Recovery events can be represented as structured records so that an execution is inspectable after the fact.
+
+The project includes tooling for:
+
+- per-run recovery telemetry,
+- JSON-safe executor results,
+- structured benchmark records,
+- append-only JSONL results,
+- task-cluster analysis,
+- repeatability checks.
+
+### 4. Keep evaluation claims empirical
+
+The benchmark/evaluation tooling is designed to make controlled experiments possible. It does **not** automatically establish that adaptive execution improves real-world agent performance.
+
+Performance claims should come only from reviewed adapters, controlled execution, independent verification, and measured campaigns.
+
+## Adaptive Execution Model
+
+The adaptive layer follows a guarded loop:
+
+```text
+Observe
+   ↓
+Classify
+   ↓
+Plan
+   ↓
+Validate
+   ↓
+Execute
+   ↓
+Verify
+   ↓
+Learn / Record
+   ↺
+```
+
+The system deliberately avoids treating every error as permission to repeat the previous command.
+
+This is particularly important for terminal agents because:
+
+- a timeout may occur after a command has already executed,
+- package installation may partially modify an environment,
+- files may have been created before a process failed,
+- external services may have accepted a request even when the client timed out.
+
+The recovery layer therefore emphasizes **state-aware remediation**.
+
+## Provider and Model Routing
+
+The project builds on Harbor's existing `BaseLLM` abstraction rather than creating a parallel provider stack.
+
+The routing layer is designed to keep:
+
+- provider selection,
+- model selection,
+- credentials,
+- execution policy,
+- fallback behavior
+
+explicit and testable.
+
+This makes it easier to reason about multi-provider environments and prevents provider-specific assumptions from leaking throughout the orchestration code.
+
+## Evaluation Architecture
+
+```mermaid
+flowchart TD
+    A[Benchmark Manifest] --> B[Baseline Adapter]
+    A --> C[Adaptive Adapter]
+    B --> D[Controlled Execution]
+    C --> D
+    D --> E[Workspace Oracle]
+    D --> F[Fault Injection]
+    E --> G[JSONL Run Records]
+    F --> G
+    G --> H[Cluster / Bootstrap Analysis]
+    H --> I[Empirical Report]
+```
+
+The evaluation harness includes a frozen benchmark manifest, paired execution structure, workspace oracles, controlled fault-injection hooks, append-only JSONL records, and task-cluster analysis.
+
+It is intentionally separated from claims about external-model performance.
+
+## Validation
+
+The focused regression suite for the adaptive/routing/runner changes currently passes:
+
+**633 passed, 5 skipped**
+
+Additional checks:
+
+```text
+uv lock --check --offline    PASS
+Ruff lint                    PASS
+Formatting                   PASS
+```
+
+The focused suite covers areas including:
+
+- OSWorld adapter behavior
+- installed-agent runners
+- model routing
+- multi-provider routing
+- OpenHands MCP behavior
+- Strands execution
+- runner safety/regression behavior
+
+> The full historical `tests/unit` suite was not treated as a release gate because unrelated failures remained in other areas of the upstream codebase. The number above is the focused regression result, not a claim that the entire upstream suite is green.
+
+## Windows Development Environment
+
+This project was validated on Windows 11 using:
+
+| Component | Validated setup |
+|---|---|
+| OS | Windows 11 |
+| Python | 3.13.x |
+| Package manager | uv 0.13.5 |
+| LLM runtime | LiteLLM 1.93.0 |
+| Rust | 1.99.1 |
+| Cargo | 1.99.1 |
+| Native build | MSVC / Visual Studio Build Tools |
+| Containers | Docker |
+| Project tooling | Harbor CLI / Python package |
+
+### Why Rust + MSVC matter
+
+Some Python dependencies contain native Rust components. On Windows, these packages require a working native build environment.
+
+For this project that means:
+
+```text
+Python
+  ↓
+uv
+  ↓
+Python dependency resolution
+  ↓
+native Rust extension
+  ↓
+Rust + MSVC linker
+  ↓
+Windows wheel
+```
+
+A correctly configured MSVC toolchain is therefore part of the reproducible development environment rather than an optional convenience.
+
+## Getting Started
+
+Clone the repository and enter the project:
+
+```powershell
+git clone https://github.com/tejasash2005-sketch/terminus-2-adaptive-agent.git
+cd terminus-2-adaptive-agent
+```
+
+Install dependencies with uv:
+
+```powershell
+uv sync
+```
+
+Check the Harbor CLI:
+
+```powershell
+uv run harbor --help
+```
+
+Run the focused regression suite:
+
+```powershell
+uv run pytest `
+  tests/unit/adapters/test_osworld.py `
+  tests/unit/agents/installed/test_antigravity_cli.py `
+  tests/unit/agents/installed/test_deerflow.py `
+  tests/unit/agents/installed/test_hermes_cli.py `
+  tests/unit/agents/installed/test_mini_swe_agent.py `
+  tests/unit/agents/installed/test_model_routing_matrix.py `
+  tests/unit/agents/installed/test_multi_provider_model_routes.py `
+  tests/unit/agents/installed/test_openhands_mcp.py `
+  tests/unit/agents/installed/test_strands.py `
+  tests/unit/agents/installed/test_strands_runner.py `
+  -q -p no:cacheprovider --tb=short
+```
+
+## Project Structure
+
+```text
+terminus-2-adaptive-agent/
+├── adapters/                     # Agent / environment adapters
+├── apps/                         # Harbor applications
+├── benchmarks/                  # Benchmark and evaluation tooling
+├── docs/
+│   └── images/
+│       └── terminus2-adaptive-architecture.png
+├── src/
+│   └── harbor/
+│       ├── agents/
+│       │   └── installed/
+│       │       ├── strands.py
+│       │       └── ...
+│       └── ...
+├── tests/
+│   └── unit/
+├── AGENTS.md
+├── README.md
+└── pyproject.toml
+```
+
+## Engineering Highlights
+
+### Recovery-aware terminal intelligence
+
+Adds structured failure classification and recovery guidance instead of relying on unconditional retries.
+
+### Policy-enforcing execution
+
+Separates model planning from execution through injected executor/verifier boundaries.
+
+### Multi-provider routing
+
+Strengthens model routing and provider isolation while preserving Harbor's shared LLM abstraction.
+
+### Regression hardening
+
+Adds focused regression coverage around Windows-sensitive runners, routing behavior, provider handling, and installed-agent integrations.
 
 ### Phase 7 release hardening
 
-Phase 7 adds stricter autonomous-run configuration and checkpoint validation,
-JSON-safe executor result contracts, cancellation checkpoints, unique atomic
-checkpoint staging files, and a repeatability campaign for the offline regression
-suite. From a fully installed development checkout, run the focused tests and
-repeatability campaign and ZIP structural validation using the commands in
-[`benchmarks/terminus2-phase7/README.md`](benchmarks/terminus2-phase7/README.md).
-Synthetic timings are local regression measurements, not external-model or
-real-world performance claims. See the guide for release status and remaining
-validation requirements.
+Includes stricter autonomous-run configuration and checkpoint validation, JSON-safe executor contracts, cancellation checkpoints, unique atomic checkpoint staging, and repeatability validation.
 
 ### Phase 8 empirical evaluation harness
 
-Phase 8 adds a frozen 100-case benchmark manifest, a paired randomized runner for
-user-supplied baseline/adaptive adapters, independent workspace oracles, controlled
-fault-injection hooks, append-only JSONL run records, and task-cluster bootstrap
-analysis. It does **not** ship empirical agent results: a real campaign requires
-reviewed adapters, externally enforced isolation/resource limits, and independently
-verified executions. See [`benchmarks/terminus2-phase8/README.md`](benchmarks/terminus2-phase8/README.md),
-its adapter contract and preregistration template, and the harness tests.
+Adds a frozen benchmark manifest, paired baseline/adaptive execution structure, workspace oracles, fault-injection hooks, JSONL records, and task-cluster bootstrap analysis.
 
-## Installation
+## Security and Safety
 
-Harbor declares Python 3.12 or newer. The repository CI currently exercises
-Python 3.13 on Linux and Windows. For this release, the supported public security
-profile is the default/core install. Optional extras remain available in the
-project but are unsupported profiles for this release: `huggingface`, `tinker`,
-`dspy`, `adapter`, `blaxel`, `langsmith`, `gke`, `beam`, `computer-1`, `cloud`,
-and `all`. Skypilot is early access and unsupported; development dependencies are
-not a supported runtime profile. See [SECURITY.md](SECURITY.md) for the security
-support boundary and publication prerequisite.
+The project follows several practical boundaries:
 
-```bash tab="uv"
-uv tool install harbor
-```
-or
-```bash tab="pip"
-pip install harbor
-```
+- Do not execute raw model-generated shell text without an explicit execution boundary.
+- Do not assume a timed-out command is safe to retry.
+- Validate structured plans before execution.
+- Keep credentials outside source control.
+- Keep provider credentials explicit and isolated.
+- Prefer deterministic/offline regression tests where possible.
+- Treat benchmark results as experimental measurements rather than automatic proof of superiority.
 
+## Project Status
 
-## Example: Running Terminal-Bench-2.0
-Harbor is the official harness for [Terminal-Bench-2.0](https://github.com/laude-institute/terminal-bench-2):
+**Current status: active engineering / portfolio project**
 
-```bash
-export ANTHROPIC_API_KEY=<YOUR-KEY>
-harbor run --dataset terminal-bench@2.0 \
-   --agent claude-code \
-   --model anthropic/claude-opus-5-5 \
-   --n-concurrent 4
-```
+Completed engineering work includes:
 
-This will launch the benchmark locally using Docker. To run it on a cloud provider (like Daytona) pass the `--env` flag as below:
+- adaptive terminal-failure classification,
+- structured recovery guidance,
+- guarded sequential orchestration,
+- provider/model routing improvements,
+- recovery telemetry and optional memory,
+- evaluation tooling,
+- Windows development infrastructure,
+- focused regression hardening,
+- professional architecture documentation.
 
-```bash
-export ANTHROPIC_API_KEY=<YOUR-KEY>
-export DAYTONA_API_KEY=<YOUR-KEY>
-harbor run --dataset terminal-bench@2.0 \
-   --agent claude-code \
-   --model anthropic/claude-opus-5-5 \
-   --n-concurrent 100 \
-   --env daytona
-```
+The project remains experimental where external-model evaluation is concerned. Measured baseline-versus-adaptive performance should be generated from a controlled campaign before being presented as a result.
 
-To see all supported agents, and other options run:
+## About Harbor
 
-```bash
-harbor run --help
-```
+[Harbor](https://github.com/harbor-framework/harbor) is a framework from the creators of Terminal-Bench for evaluating and optimizing agents and language models.
 
-To explore all supported third party benchmarks (like SWE-Bench and Aider Polyglot) run:
+This project uses Harbor as its engineering foundation and extends it for the purposes described above.
 
-```bash
-harbor datasets list
-```
+For upstream documentation and ecosystem resources:
 
-To evaluate an agent and model one of these datasets, you can use the following command:
+- [Harbor repository](https://github.com/harbor-framework/harbor)
+- [Harbor documentation](https://harborframework.com/docs)
+- [Harbor Cookbook](https://github.com/harbor-framework/harbor-cookbook)
+- [Terminal-Bench](https://www.tbench.ai)
 
-```bash
-harbor run -d "<dataset@version>" -m "<model>" -a "<agent>"
-```
+## Provenance and Attribution
 
-## Citation
+This repository contains substantial upstream-derived Harbor/Terminus-2 material alongside project-specific engineering changes.
 
-If you use **Harbor** in academic work, please cite it using the “Cite this repository” button on GitHub or the following BibTeX entry:
+The adaptive execution, recovery, routing, evaluation, documentation, and regression work described in this README should be understood as the scope of this project rather than as an assertion of upstream authorship.
 
-```bibtex
-@software{Harbor_Framework,
-author = {{Harbor Framework Team}},
-title = {{Harbor: A framework for evaluating and optimizing agents and models in container environments}},
-year = {2026},
-doi = {10.5281/zenodo.20953922},
-url = {https://doi.org/10.5281/zenodo.20953922}
-}
-```
+See the repository's provenance and audit documentation for a more detailed accounting.
 
-The DOI above is the **concept DOI**, which always resolves to the latest release and aggregates citations across all versions. To cite a specific version instead, use that version's DOI from the [Zenodo record](https://doi.org/10.5281/zenodo.20953922).
+## License
+
+This project follows the licensing and attribution requirements of the underlying Harbor project and its included components. Refer to the repository's license files and upstream notices for the applicable terms.
+
+## Portfolio Summary
+
+**Terminus-2 Adaptive Agent** demonstrates practical AI-agent engineering across:
+
+- agent orchestration,
+- terminal execution safety,
+- failure recovery,
+- LLM/provider routing,
+- observability,
+- benchmark infrastructure,
+- regression testing,
+- Windows native build systems,
+- Docker-based environments,
+- reproducible Python tooling.
+
+The emphasis is on building a system that is **observable, testable, policy-aware, and honest about what has and has not been empirically demonstrated**.
